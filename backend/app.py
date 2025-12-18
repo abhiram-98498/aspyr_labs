@@ -16,12 +16,7 @@ def get_clients():
     try:
         conn = get_connection()
         cur = conn.cursor()
-
-        cur.execute("""
-            SELECT id, first_name, last_name, phone, ssn, gender, age
-            FROM clients
-            ORDER BY id
-        """)
+        cur.execute("SELECT * FROM clients")
 
         rows = cur.fetchall()
 
