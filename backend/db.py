@@ -1,9 +1,19 @@
 import os
 import psycopg2
-from dotenv import load_dotenv
-load_dotenv()
+from psycopg2.extras import RealDictCursor
+
 def get_connection():
-    return psycopg2.connect(
-        os.getenv("DATABASE_URL"),
-        sslmode="require"
-    )
+    db_url = os.getenv("DATABASE_URL")
+
+    if not db_url:
+        raise RuntimeError(
+            "DATABASE_URL is not set. Check Render environment variables."
+        )
+
+    try:
+        return psycopg2.connect(
+            db_url,
+            cursor_factory=RealDictCursor
+        )
+    except Exception as e:
+        raise RuntimeError(f"Database connection failed: {e}")
