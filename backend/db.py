@@ -2,7 +2,9 @@ import os
 import psycopg2
 
 def get_connection():
-    return psycopg2.connect(
-        os.getenv("DATABASE_URL"),
-        sslmode="require"
-    )
+    db_url = os.getenv("DATABASE_URL")
+
+    if not db_url:
+        raise RuntimeError("DATABASE_URL environment variable is not set")
+
+    return psycopg2.connect(db_url)
