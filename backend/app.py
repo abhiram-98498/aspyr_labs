@@ -5,61 +5,93 @@ from db import get_connection
 app = Flask(__name__)
 CORS(app)
 
-@app.route("/")
+
+@app.route("/", methods=["GET"])
 def home():
-    return {"message": "Party Management Backend is running"}
+    return jsonify({"message": "Party Management Backend is running"}), 200
 
 
 @app.route("/clients", methods=["GET"])
 def get_clients():
-    conn = get_connection()
-    cur = conn.cursor()
-    cur.execute("SELECT * FROM clients")
-    rows = cur.fetchall()
-    cur.close()
-    conn.close()
+    try:
+        conn = get_connection()
+        cur = conn.cursor()
 
-    clients = []
-    for r in rows:
-        clients.append({
-            "id": r[0],
-            "f": r[1],
-            "l": r[2],
-            "phone": r[3],
-            "ssn": r[4],
-            "g": r[5],
-            "a": r[6]
-        })
-    return jsonify(clients)
+        cur.execute("""
+            SELECT id, first_name, last_name, phone, ssn, gender, age
+            FROM clients
+            ORDER BY id
+        """)
+
+        rows = cur.fetchall()
+
+        cur.close()
+        conn.close()
+
+        clients = []
+        for r in rows:
+            clients.append({
+                "id": r["id"],
+                "f": r["first_name"],
+                "l": r["last_name"],
+                "phone": r["phone"],
+                "ssn": r["ssn"],
+                "g": r["gender"],
+                "a": r["age"]
+            })
+
+        return jsonify(clients), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 @app.route("/clients", methods=["POST"])
 def add_client():
-    data = request.json
-    conn = get_connection()
-    cur = conn.cursor()
-    cur.execute(
-        """
-        INSERT INTO clients (first_name, last_name, phone, ssn, gender, age)
-        VALUES (%s,%s,%s,%s,%s,%s)
-        """,
-        (data["f"], data["l"], data["phone"], data["ssn"], data["g"], data["a"])
-    )
-    conn.commit()
-    cur.close()
-    conn.close()
-    return jsonify({"message": "Client added"}), 201
+    try:
+        data = request.get_json()
+
+        conn = get_connection()
+        cur = conn.cursor()
+
+        cur.execute("""
+            INSERT INTO clients (first_name, last_name, phone, ssn, gender, age)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """, (
+            data["f"],
+            data["l"],
+            data["phone"],
+            data["ssn"],
+            data["g"],
+            data["a"]
+        ))
+
+        conn.commit()
+        cur.close()
+        conn.close()
+
+        return jsonify({"message": "Client added successfully"}), 201
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
-@app.route("/clients/<int:id>", methods=["DELETE"])
-def delete_client(id):
-    conn = get_connection()
-    cur = conn.cursor()
-    cur.execute("DELETE FROM clients WHERE id=%s", (id,))
-    conn.commit()
-    cur.close()
-    conn.close()
-    return jsonify({"message": "Client deleted"})
+@app.route("/clients/<int:client_id>", methods=["DELETE"])
+def delete_client(client_id):
+    try:
+        conn = get_connection()
+        cur = conn.cursor()
+
+        cur.execute("DELETE FROM clients WHERE id = %s", (client_id,))
+        conn.commit()
+
+        cur.close()
+        conn.close()
+
+        return jsonify({"message": "Client deleted successfully"}), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 if __name__ == "__main__":
