@@ -1,4 +1,4 @@
-const BASE_URL = "http://127.0.0.1:5000";
+const BASE_URL = "https://aspyr-labs.onrender.com";
 
 export const fetchClients = async () => {
   const res = await fetch(`${BASE_URL}/clients`);
