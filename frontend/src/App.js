@@ -24,7 +24,6 @@ export default function App() {
     a: ""
   });
 
-  /* ================= LOAD DATA ================= */
   useEffect(() => {
     loadClients();
   }, []);
@@ -62,15 +61,15 @@ export default function App() {
 
   return (
     <div style={page}>
+      {/* HEADER */}
       <div style={header}>
-        <h1 style={{ margin: 0 }}>Party Management System</h1>
-        <p style={{ margin: 0 }}>React + Flask + PostgreSQL</p>
+        <h1 style={title}>Aspyr Anthros</h1>
       </div>
 
       <div style={layout}>
         {/* SIDEBAR */}
         <div style={sidebar}>
-          <h3>Gender & Age Groups</h3>
+          <h3 style={sectionTitle}>Gender & Age Groups</h3>
 
           {["Male", "Female"].map(g => (
             <div key={g}>
@@ -81,7 +80,7 @@ export default function App() {
                   setOpenAge(null);
                 }}
               >
-                {g}
+                <span>{g}</span>
                 <span style={genderCount}>
                   {clients.filter(c => c.g === g).length}
                 </span>
@@ -94,7 +93,7 @@ export default function App() {
                     style={ageRow}
                     onClick={() => setOpenAge(ag)}
                   >
-                    {ag.label}
+                    <span>{ag.label}</span>
                     <span style={ageCount}>{countAge(g, ag)}</span>
                   </div>
                 ))}
@@ -121,21 +120,27 @@ export default function App() {
           )}
         </div>
 
-        {/* TABLE */}
+        {/* CONTENT */}
         <div style={content}>
-          <h2>
-            {openGender ? `${openGender} ${openAge ? " - " + openAge.label : ""}` : "Select Gender"}
+          <h2 style={contentTitle}>
+            {openGender ? `${openGender}${openAge ? " - " + openAge.label : ""}` : "Select Gender"}
           </h2>
 
           <table style={table}>
             <thead style={thead}>
               <tr>
-                <th>#</th><th>First</th><th>Last</th><th>Phone</th><th>SSN</th><th>Age</th><th>Action</th>
+                <th>#</th>
+                <th>First</th>
+                <th>Last</th>
+                <th>Phone</th>
+                <th>SSN</th>
+                <th>Age</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
               {filtered.map((c, i) => (
-                <tr key={c.id}>
+                <tr key={c.id} style={row}>
                   <td>{i + 1}</td>
                   <td>{c.f}</td>
                   <td>{c.l}</td>
@@ -143,12 +148,16 @@ export default function App() {
                   <td>{c.ssn}</td>
                   <td>{c.a}</td>
                   <td>
-                    <button style={deleteBtn} onClick={() => removeClient(c.id)}>Delete</button>
+                    <button style={deleteBtn} onClick={() => removeClient(c.id)}>
+                      Delete
+                    </button>
                   </td>
                 </tr>
               ))}
               {filtered.length === 0 && (
-                <tr><td colSpan="7" style={{ textAlign: "center" }}>No Data</td></tr>
+                <tr>
+                  <td colSpan="7" style={noData}>No Data</td>
+                </tr>
               )}
             </tbody>
           </table>
@@ -159,18 +168,135 @@ export default function App() {
 }
 
 /* ================= STYLES ================= */
-const page = { fontFamily: "Segoe UI", background: "#f4f6fb", minHeight: "100vh" };
-const header = { padding: 20, background: "#6366f1", color: "white" };
-const layout = { display: "flex" };
-const sidebar = { width: 320, padding: 20, background: "#f8fafc" };
-const genderCard = { padding: 12, marginBottom: 8, background: "#e0e7ff", borderRadius: 12, cursor: "pointer", display: "flex", justifyContent: "space-between" };
-const genderCount = { background: "#6366f1", color: "white", padding: "2px 8px", borderRadius: 10 };
-const ageRow = { marginLeft: 12, padding: 8, cursor: "pointer", display: "flex", justifyContent: "space-between" };
-const ageCount = { background: "#93c5fd", padding: "2px 8px", borderRadius: 8 };
-const toggleBtn = { width: "100%", padding: 10, marginTop: 10 };
-const formBox = { display: "flex", flexDirection: "column", gap: 6, marginTop: 10 };
-const insertBtn = { background: "#22c55e", color: "white", padding: 8, border: "none" };
-const content = { flex: 1, padding: 20 };
-const table = { width: "100%", borderCollapse: "collapse", background: "white" };
-const thead = { background: "#6366f1", color: "white" };
-const deleteBtn = { background: "#ef4444", color: "white", border: "none", padding: "4px 8px" };
+
+const page = {
+  fontFamily: "Segoe UI",
+  background: "#f3e5f5",
+  minHeight: "100vh"
+};
+
+const header = {
+  padding: 20,
+  background: "#4a148c",
+  color: "white",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center"
+};
+
+const title = {
+  margin: 0,
+  fontSize: 28,
+  fontWeight: "bold"
+};
+
+const layout = {
+  display: "grid",
+  gridTemplateColumns: "320px 1fr"
+};
+
+const sidebar = {
+  padding: 20,
+  background: "#ede7f6",
+  borderRight: "2px solid #d1c4e9"
+};
+
+const sectionTitle = {
+  color: "#4a148c"
+};
+
+const genderCard = {
+  padding: 12,
+  marginBottom: 8,
+  background: "#d1c4e9",
+  borderRadius: 12,
+  cursor: "pointer",
+  display: "flex",
+  justifyContent: "space-between",
+  color: "#4a148c",
+  fontWeight: "600"
+};
+
+const genderCount = {
+  background: "#6a1b9a",
+  color: "white",
+  padding: "2px 8px",
+  borderRadius: 10
+};
+
+const ageRow = {
+  marginLeft: 12,
+  padding: 8,
+  cursor: "pointer",
+  display: "flex",
+  justifyContent: "space-between",
+  color: "#4a148c"
+};
+
+const ageCount = {
+  background: "#e1bee7",
+  padding: "2px 8px",
+  borderRadius: 8
+};
+
+const toggleBtn = {
+  width: "100%",
+  padding: 10,
+  marginTop: 10,
+  background: "#6a1b9a",
+  color: "white",
+  border: "none",
+  borderRadius: 8
+};
+
+const formBox = {
+  display: "grid",
+  gap: 8,
+  marginTop: 12
+};
+
+const insertBtn = {
+  background: "#6a1b9a",
+  color: "white",
+  padding: 8,
+  border: "none",
+  borderRadius: 6
+};
+
+const content = {
+  padding: 20
+};
+
+const contentTitle = {
+  color: "#4a148c",
+  marginBottom: 12
+};
+
+const table = {
+  width: "100%",
+  borderCollapse: "collapse",
+  background: "white"
+};
+
+const thead = {
+  background: "#6a1b9a",
+  color: "white"
+};
+
+const row = {
+  borderBottom: "1px solid #e1bee7"
+};
+
+const deleteBtn = {
+  background: "#6a1b9a",
+  color: "white",
+  border: "none",
+  padding: "4px 10px",
+  borderRadius: 4
+};
+
+const noData = {
+  textAlign: "center",
+  padding: 20,
+  color: "#4a148c"
+};
